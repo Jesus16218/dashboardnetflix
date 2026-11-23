@@ -8,6 +8,7 @@ import AudienceChart from './components/AudienceChart'
 import TitleExplorer from './components/TitleExplorer'
 import { computeDashboard } from './data/analytics'
 import { useNetflixData } from './hooks/useNetflixData'
+import ClickSpark from './components/reactbits/ClickSpark'
 
 const EMPTY_FILTERS = { year: 'ALL', type: 'ALL', country: 'ALL', genre: 'ALL', rating: 'ALL' }
 
@@ -70,6 +71,7 @@ export default function App() {
   return (
     <div className="app-bg relative min-h-screen overflow-hidden text-white">
       <div className="page-glow pointer-events-none absolute inset-x-0 top-0 h-[420px]" aria-hidden="true" />
+      <ClickSpark />
       <div className="relative mx-auto max-w-[1500px] px-4 py-6 md:px-8 md:py-8">
         {loading ? (
           <LoadingState />

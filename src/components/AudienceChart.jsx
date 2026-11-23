@@ -1,5 +1,5 @@
 import React from 'react'
-import AnimatedCard from './AnimatedCard'
+import SpotlightCard from './reactbits/SpotlightCard'
 
 const fmt = (value) => Number(value || 0).toLocaleString('es-ES')
 
@@ -7,7 +7,11 @@ export default function AudienceChart({ ratings = [], activeRating = 'ALL', onRa
   const max = Math.max(...ratings.map((item) => item.count), 1)
 
   return (
-    <AnimatedCard delay={0.54} className="flex h-full flex-col rounded-md border border-white/[0.07] bg-[#191920] p-5 shadow-lg shadow-black/20">
+    <SpotlightCard
+      delay={0.54}
+      color={activeRating === 'ALL' ? '95, 194, 188' : '229, 9, 20'}
+      className="flex h-full flex-col rounded-md border border-white/[0.07] bg-[#191920] p-5 shadow-lg shadow-black/20"
+    >
       <div className="mb-4">
         <h3 className="text-base font-bold text-white">Clasificación por edad</h3>
         <p className="mt-0.5 text-xs text-[#8A8A92]">Haz clic en una barra para filtrar</p>
@@ -32,7 +36,7 @@ export default function AudienceChart({ ratings = [], activeRating = 'ALL', onRa
                   onKeyDown={selectable ? (event) => {
                     if (event.key === 'Enter' || event.key === ' ') select()
                   } : undefined}
-                  className={`group relative flex h-full flex-1 flex-col items-center justify-end rounded-t-sm transition ${selectable ? 'cursor-pointer hover:bg-white/5' : ''} ${isActive ? 'ring-1 ring-[#E50914]/50' : ''}`}
+                  className={`group relative flex h-full flex-1 flex-col items-center justify-end rounded-t-sm transition-all duration-300 hover:bg-white/5 ${isActive ? 'bg-[#E50914]/[0.06] shadow-[0_0_24px_-10px_rgba(229,9,20,0.9)] ring-1 ring-[#E50914]/50' : ''}`}
                 >
                   <div
                     className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 whitespace-nowrap rounded-sm border border-white/10 bg-[#0B0B0D]/95 px-2.5 py-1.5 text-[11px] shadow-xl opacity-0 transition-opacity group-hover:opacity-100"
@@ -63,6 +67,6 @@ export default function AudienceChart({ ratings = [], activeRating = 'ALL', onRa
           </div>
         </>
       )}
-    </AnimatedCard>
+    </SpotlightCard>
   )
 }

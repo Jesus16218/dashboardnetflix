@@ -1,5 +1,7 @@
 import React from 'react'
 import AnimatedCard from './AnimatedCard'
+import ShinyText from './reactbits/ShinyText'
+import Sparkles from './reactbits/Sparkles'
 
 function FilterSelect({ label, value, onChange, options, disabled }) {
   return (
@@ -26,6 +28,7 @@ export default function Header({ options, filters, onChange, onReset, loading })
     <AnimatedCard as="header" delay={0} className="relative mb-6 overflow-hidden rounded-md border border-white/[0.07] bg-[#0B0B0D] p-5 shadow-[0_24px_70px_-35px_rgba(229,9,20,0.75)] md:p-6">
       <div className="header-glow pointer-events-none absolute inset-0" aria-hidden="true" />
       <div className="header-vignette pointer-events-none absolute inset-0" aria-hidden="true" />
+      <Sparkles count={16} className="z-[1] opacity-70" />
 
       <div className="relative z-10 flex flex-col gap-6 2xl:flex-row 2xl:items-center 2xl:justify-between">
         <div className="flex items-start gap-4">
@@ -33,12 +36,9 @@ export default function Header({ options, filters, onChange, onReset, loading })
             N
           </div>
           <div>
-            <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="text-xl font-bold tracking-tight text-white md:text-2xl">Netflix Control Panel</h1>
-              <span className="rounded border border-[#E50914]/40 bg-[#E50914]/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-[#FF6B70]">
-                Catálogo 2008–2021
-              </span>
-            </div>
+            <h1 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl lg:text-[2.5rem] xl:text-[2.85rem]">
+              <ShinyText text="Netflix Control Panel" speed={4.5} />
+            </h1>
             <p className="mt-1 max-w-lg text-xs text-[#9A9AA2]">
               Explora qué hay en el catálogo, de dónde viene y a quién va dirigido.
             </p>

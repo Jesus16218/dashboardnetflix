@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import AnimatedCard from './AnimatedCard'
+import SpotlightCard from './reactbits/SpotlightCard'
+import { m } from 'motion/react'
 
 export default function TitleExplorer({ titles = [], totalFiltered = 0, query, onQueryChange }) {
   const [limit, setLimit] = useState(8)
@@ -7,7 +8,12 @@ export default function TitleExplorer({ titles = [], totalFiltered = 0, query, o
   const visible = titles.slice(0, limit)
 
   return (
-    <AnimatedCard as="section" delay={0.6} className="rounded-md border border-white/[0.07] bg-[#191920] p-5 shadow-lg shadow-black/20">
+    <SpotlightCard
+      as="section"
+      delay={0.6}
+      color={query ? '229, 9, 20' : '95, 194, 188'}
+      className="rounded-md border border-white/[0.07] bg-[#191920] p-5 shadow-lg shadow-black/20"
+    >
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-base font-bold text-white">Explorador de títulos</h3>
@@ -44,10 +50,16 @@ export default function TitleExplorer({ titles = [], totalFiltered = 0, query, o
               <th className="pb-2.5 text-right font-semibold">Rating</th>
             </tr>
           </thead>
-          <tbody>
-            {visible.map((item) => (
-              <tr key={item.id} className="border-b border-white/[0.05] transition hover:bg-white/[0.03]">
-                <td className="py-3 pr-4">
+          <tbody key={query}>
+            {visible.map((item, index) => (
+              <m.tr
+                key={item.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.28, delay: Math.min(index * 0.025, 0.2) }}
+                className="group border-b border-white/[0.05] transition-colors hover:bg-[#E50914]/[0.06]"
+              >
+                <td className="border-l-2 border-transparent py-3 pr-4 transition-colors group-hover:border-[#E50914]">
                   <p className="font-semibold text-white">{item.title}</p>
                   <p className="truncate text-[11px] text-[#77777F]">{item.genres.slice(0, 2).join(' · ')}</p>
                 </td>
@@ -59,7 +71,7 @@ export default function TitleExplorer({ titles = [], totalFiltered = 0, query, o
                 <td className="py-3 pr-4 text-xs text-[#C8C8CE]">{item.country}</td>
                 <td className="py-3 pr-4 text-xs text-[#9A9AA2]">{item.dateAdded || '—'}</td>
                 <td className="py-3 text-right text-xs font-semibold text-white">{item.rating}</td>
-              </tr>
+              </m.tr>
             ))}
           </tbody>
         </table>
@@ -80,6 +92,6 @@ export default function TitleExplorer({ titles = [], totalFiltered = 0, query, o
           </button>
         </div>
       )}
-    </AnimatedCard>
+    </SpotlightCard>
   )
 }

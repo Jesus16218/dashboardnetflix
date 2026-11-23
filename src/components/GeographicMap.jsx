@@ -1,5 +1,5 @@
 import React from 'react'
-import AnimatedCard from './AnimatedCard'
+import SpotlightCard from './reactbits/SpotlightCard'
 import WorldChoropleth from './WorldChoropleth'
 
 const fmt = (value) => Number(value || 0).toLocaleString('es-ES')
@@ -9,7 +9,11 @@ export default function GeographicMap({ countryCounts = [], totalFiltered = 0, s
   const max = Math.max(...topCountries.map((item) => item.count), 1)
 
   return (
-    <AnimatedCard delay={0.48} className="flex h-full flex-col rounded-md border border-white/[0.07] bg-[#191920] p-5 shadow-lg shadow-black/20">
+    <SpotlightCard
+      delay={0.48}
+      color={selectedCountry === 'ALL' ? '95, 194, 188' : '229, 9, 20'}
+      className="flex h-full flex-col rounded-md border border-white/[0.07] bg-[#191920] p-5 shadow-lg shadow-black/20"
+    >
       <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
         <div>
           <h3 className="text-base font-bold text-white">De dónde vienen los títulos</h3>
@@ -68,6 +72,6 @@ export default function GeographicMap({ countryCounts = [], totalFiltered = 0, s
           )}
         </div>
       </div>
-    </AnimatedCard>
+    </SpotlightCard>
   )
 }

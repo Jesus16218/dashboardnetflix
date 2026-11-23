@@ -132,11 +132,268 @@ select option {
   }
 }
 
+/* --- Efectos estilo React Bits --- */
+
+/* SpotlightCard: halo que sigue al cursor (variables las escribe el componente). */
+.spotlight-card {
+  position: relative;
+  isolation: isolate;
+}
+
+.spotlight-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    420px circle at var(--spotlight-x, -1000px) var(--spotlight-y, -1000px),
+    rgba(var(--spotlight-color, 229, 9, 20), 0.16),
+    transparent 62%
+  );
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+
+/* DynamicCard: el borde y el resplandor toman el color de los datos de cada tarjeta. */
+.dynamic-card {
+  transition: border-color 300ms ease, box-shadow 300ms ease;
+}
+
+.dynamic-card:hover {
+  border-color: rgba(var(--spotlight-color, 229, 9, 20), 0.45);
+  box-shadow:
+    0 0 0 1px rgba(var(--spotlight-color, 229, 9, 20), 0.12),
+    0 20px 45px -28px rgba(var(--spotlight-color, 229, 9, 20), 0.65);
+}
+
+/* Destello breve cuando cambia un valor por un filtro. */
+.value-flash {
+  animation: valueFlash 700ms ease-out;
+}
+
+@keyframes valueFlash {
+  0% {
+    text-shadow: 0 0 18px rgba(255, 122, 126, 0.95), 0 0 36px rgba(229, 9, 20, 0.55);
+  }
+  100% {
+    text-shadow: 0 0 0 rgba(229, 9, 20, 0);
+  }
+}
+
+/* Brillo que recorre las barras de progreso. */
+.metric-bar {
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+  transform: translateX(-100%);
+  animation: barShimmer 2.8s ease-in-out infinite;
+}
+
+@keyframes barShimmer {
+  0%,
+  55% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Emojis de fondo en las tarjetas KPI. */
+.kpi-emoji {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+  filter: saturate(0.8);
+  animation: emojiFloat 9s ease-in-out infinite;
+}
+
+/* La tarjeta roja es muy luminosa: se aclara el emoji y se apoya en un halo oscuro. */
+.kpi-emoji--hero {
+  filter: brightness(1.35) contrast(1.1) drop-shadow(0 6px 16px rgba(0, 0, 0, 0.55));
+}
+
+@keyframes emojiFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-10deg) scale(1);
+  }
+  50% {
+    transform: translate3d(-6px, -9px, 0) rotate(-4deg) scale(1.06);
+  }
+}
+
+.hero-orb {
+  animation: orbPulse 6s ease-in-out infinite;
+}
+
+@keyframes orbPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.18);
+  }
+}
+
+/* ShinyText: barrido diagonal de brillo sobre el texto. */
+.shiny-text {
+  background: linear-gradient(
+    110deg,
+    #ffffff 0%,
+    #ffffff 30%,
+    #ffd6d9 40%,
+    #ff5f67 50%,
+    #fff0f1 60%,
+    #ffffff 72%,
+    #ffffff 100%
+  );
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 14px rgba(229, 9, 20, 0.4));
+}
+
+.shiny-text--active {
+  animation: shinySweep var(--shiny-speed, 5s) linear infinite;
+}
+
+@keyframes shinySweep {
+  to {
+    background-position: -120% 0;
+  }
+}
+
+/* Sparkles: partículas que suben y se desvanecen. */
+.sparkles {
+  z-index: 1;
+}
+
+.sparkle {
+  position: absolute;
+  border-radius: 9999px;
+  background: #ffffff;
+  box-shadow: 0 0 6px 1px rgba(255, 122, 126, 0.85);
+  opacity: 0;
+  animation-name: sparkleFloat;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes sparkleFloat {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.6);
+  }
+  45% {
+    opacity: 0.9;
+    transform: translate3d(6px, -14px, 0) scale(1);
+  }
+  70% {
+    opacity: 0;
+    transform: translate3d(12px, -28px, 0) scale(0.4);
+  }
+}
+
+/* Burbujas de gaseosa: suben oscilando y se disuelven antes de llegar arriba. */
+.soda-bubbles {
+  z-index: -1;
+}
+
+.soda-bubble {
+  position: absolute;
+  bottom: -18px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.03) 62%);
+  box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.22), 0 0 7px rgba(95, 194, 188, 0.2);
+  opacity: 0;
+  animation-name: sodaRise;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes sodaRise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.55);
+  }
+  12% {
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate3d(var(--bubble-drift, 0px), -150px, 0) scale(1);
+  }
+  85% {
+    opacity: 0.45;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--bubble-drift-end, 0px), -300px, 0) scale(0.7);
+  }
+}
+
+/* Variante dentro de las barras: burbujas diminutas que suben por el relleno. */
+.soda-bubble--bar {
+  bottom: -3px;
+  border-color: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.7);
+  animation-name: sodaBarRise;
+}
+
+@keyframes sodaBarRise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 3px, 0) scale(0.5);
+  }
+  30% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--bubble-drift, 0px), -13px, 0) scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .header-glow,
   .header-glow::before,
   .header-glow::after,
-  .page-glow {
+  .page-glow,
+  .shiny-text--active,
+  .sparkle,
+  .value-flash,
+  .metric-bar::after,
+  .hero-orb,
+  .kpi-emoji,
+  .soda-bubble {
     animation: none;
+  }
+
+  .sparkle {
+    opacity: 0.35;
   }
 }

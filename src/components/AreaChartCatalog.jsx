@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import AnimatedCard from './AnimatedCard'
+import SpotlightCard from './reactbits/SpotlightCard'
 
 const W = 720
 const H = 250
@@ -34,7 +34,11 @@ export default function AreaChartCatalog({ yearly = [], selectedYear, onYearSele
   const ticks = Array.from({ length: 5 }, (_, index) => max * (1 - index / 4))
 
   return (
-    <AnimatedCard delay={0.36} className="relative flex h-full flex-col rounded-md border border-white/[0.07] bg-[#191920] p-5 shadow-lg shadow-black/20">
+    <SpotlightCard
+      delay={0.36}
+      color={selectedYear === 'ALL' ? '229, 9, 20' : '255, 138, 92'}
+      className="relative flex h-full flex-col rounded-md border border-white/[0.07] bg-[#191920] p-5 shadow-lg shadow-black/20"
+    >
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 className="text-base font-bold text-white">Cómo creció el catálogo</h3>
@@ -130,6 +134,6 @@ export default function AreaChartCatalog({ yearly = [], selectedYear, onYearSele
           </div>
         )}
       </div>
-    </AnimatedCard>
+    </SpotlightCard>
   )
 }

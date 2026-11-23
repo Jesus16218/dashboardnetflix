@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
-import AnimatedCard from './AnimatedCard'
+import SpotlightCard from './reactbits/SpotlightCard'
 
 const fmt = (value) => Math.round(Number(value || 0)).toLocaleString('es-ES')
 const MONTH_NAMES = ['', 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
 
 function AnimatedNumber({ value }) {
   const [display, setDisplay] = useState(Math.round(value || 0))
+  const [flash, setFlash] = useState(false)
   const displayRef = useRef(Math.round(value || 0))
+  const firstRender = useRef(true)
 
   useEffect(() => {
     const from = displayRef.current
@@ -26,7 +28,22 @@ function AnimatedNumber({ value }) {
     return () => cancelAnimationFrame(frame)
   }, [value])
 
-  return <>{fmt(display)}</>
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false
+      return undefined
+    }
+
+    setFlash(false)
+    const restart = requestAnimationFrame(() => setFlash(true))
+    const timer = setTimeout(() => setFlash(false), 750)
+    return () => {
+      cancelAnimationFrame(restart)
+      clearTimeout(timer)
+    }
+  }, [value])
+
+  return <span className={flash ? 'value-flash' : undefined}>{fmt(display)}</span>
 }
 
 function Sparkline({ yearly }) {
@@ -54,12 +71,25 @@ function Sparkline({ yearly }) {
   )
 }
 
-function Card({ label, children, delay = 0, className = '' }) {
+function KpiEmoji({ emoji, className = '', opacity = 0.13, delay = 0 }) {
   return (
-    <AnimatedCard delay={delay} className={`rounded-md border border-white/[0.07] bg-[#191920] p-5 shadow-lg shadow-black/20 ${className}`}>
-      <span className="text-xs font-semibold text-[#B8B8BC]">{label}</span>
+    <span
+      aria-hidden="true"
+      className={`kpi-emoji ${className}`}
+      style={{ opacity, animationDelay: `${delay}s` }}
+    >
+      {emoji}
+    </span>
+  )
+}
+
+function Card({ label, children, emoji, delay = 0, color = '229, 9, 20', className = '' }) {
+  return (
+    <SpotlightCard delay={delay} color={color} className={`overflow-hidden rounded-md border border-white/[0.07] bg-[#191920] p-5 shadow-lg shadow-black/20 ${className}`}>
+      {emoji && <KpiEmoji emoji={emoji} className="-bottom-5 right-2 text-[7rem]" delay={delay * 5} />}
+      <span className="relative text-xs font-semibold text-[#B8B8BC]">{label}</span>
       {children}
-    </AnimatedCard>
+    </SpotlightCard>
   )
 }
 
@@ -69,8 +99,10 @@ export default function KPICards({ kpis, yearly }) {
   return (
     <section className="mb-6 space-y-4">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <AnimatedCard delay={0.06} className="relative flex flex-col justify-between overflow-hidden rounded-md bg-gradient-to-br from-[#E50914] to-[#8E0B12] p-6 shadow-[0_20px_55px_-25px_rgba(229,9,20,0.9)] sm:flex-row sm:items-center lg:col-span-2">
-          <div className="pointer-events-none absolute -right-16 -top-24 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
+        <SpotlightCard delay={0.06} className="relative flex flex-col justify-between overflow-hidden rounded-md bg-gradient-to-br from-[#E50914] to-[#8E0B12] p-6 shadow-[0_20px_55px_-25px_rgba(229,9,20,0.9)] sm:flex-row sm:items-center lg:col-span-2">
+          <div className="hero-orb pointer-events-none absolute -right-16 -top-24 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
+          <div className="pointer-events-none absolute -bottom-20 right-0 h-56 w-80 rounded-full bg-black/45 blur-3xl" style={{ zIndex: -1 }} aria-hidden="true" />
+          <KpiEmoji emoji="🍿" className="kpi-emoji--hero -bottom-10 right-6 text-[9rem] md:text-[11rem]" opacity={0.32} delay={1.2} />
           <div className="relative">
             <span className="inline-flex rounded-md bg-black/25 px-2.5 py-1 text-[11px] font-semibold text-red-50">
               Total de títulos {kpis.scopeLabel}
@@ -95,9 +127,9 @@ export default function KPICards({ kpis, yearly }) {
           <div className="relative mt-5 sm:mt-0">
             <Sparkline yearly={yearly} />
           </div>
-        </AnimatedCard>
+        </SpotlightCard>
 
-        <Card label="Títulos nuevos al mes" delay={0.12} className="flex flex-col justify-between">
+        <Card label="Títulos nuevos al mes" emoji="📈" delay={0.12} color="46, 125, 122" className="flex flex-col justify-between">
           <div>
             <div className="mt-2 flex items-baseline gap-2">
               <span className="text-3xl font-bold text-white"><AnimatedNumber value={kpis.monthlyAvg} /></span>
@@ -110,7 +142,7 @@ export default function KPICards({ kpis, yearly }) {
               <span className="font-semibold text-[#5FC2BC]">Meses con datos</span>
               <span className="text-[#D8D8DC]">{kpis.monthsInReference} de 12</span>
             </div>
-            <div className="mt-2 h-1.5 overflow-hidden rounded-sm bg-black/30">
+            <div className="metric-bar mt-2 h-1.5 overflow-hidden rounded-sm bg-black/30">
               <div className="h-full rounded-sm bg-[#2E7D7A]" style={{ width: `${(kpis.monthsInReference / 12) * 100}%` }} />
             </div>
           </div>
@@ -118,12 +150,12 @@ export default function KPICards({ kpis, yearly }) {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Card label="Películas y series" delay={0.18}>
+        <Card label="Películas y series" emoji="🎬" delay={0.18} color="229, 9, 20">
           <div className="mt-2 flex items-baseline justify-between gap-2">
             <span className="text-lg font-bold text-white">{kpis.moviesPct}% <span className="text-xs font-normal text-[#9A9AA2]">películas</span></span>
             <span className="text-lg font-bold text-[#5FC2BC]">{kpis.tvShowsPct}% <span className="text-xs font-normal text-[#9A9AA2]">series</span></span>
           </div>
-          <div className="mt-3 flex h-3 w-full overflow-hidden rounded-sm bg-[#0F0F11]">
+          <div className="metric-bar mt-3 flex h-3 w-full overflow-hidden rounded-sm bg-[#0F0F11]">
             <div className="h-full bg-gradient-to-r from-[#B5191F] to-[#E50914] transition-all duration-500" style={{ width: `${kpis.moviesPct}%` }} />
             <div className="h-full bg-[#2E7D7A] transition-all duration-500" style={{ width: `${kpis.tvShowsPct}%` }} />
           </div>
@@ -132,7 +164,7 @@ export default function KPICards({ kpis, yearly }) {
           </p>
         </Card>
 
-        <Card label="Países en el catálogo" delay={0.24}>
+        <Card label="Países en el catálogo" emoji="🌍" delay={0.24} color="46, 125, 122">
           <div className="mt-2 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-white"><AnimatedNumber value={kpis.uniqueCountries} /> países</span>
             <span className="text-[11px] font-semibold text-[#5FC2BC]">+<AnimatedNumber value={kpis.newCountries} /> nuevos</span>
@@ -142,13 +174,13 @@ export default function KPICards({ kpis, yearly }) {
               <span className="truncate">El que más aporta: {kpis.leadingCountry.name}</span>
               <span className="ml-2 shrink-0 font-semibold text-white">{kpis.leadingCountry.pct}%</span>
             </div>
-            <div className="h-2.5 w-full overflow-hidden rounded-sm bg-[#0F0F11]">
+            <div className="metric-bar h-2.5 w-full overflow-hidden rounded-sm bg-[#0F0F11]">
               <div className="h-full rounded-sm bg-gradient-to-r from-[#2E7D7A] to-[#5FC2BC] transition-all duration-500" style={{ width: `${kpis.leadingCountry.pct}%` }} />
             </div>
           </div>
         </Card>
 
-        <Card label="Clasificación más común" delay={0.3}>
+        <Card label="Clasificación más común" emoji="🏷️" delay={0.3} color="214, 158, 46">
           <div className="mt-2 flex items-baseline gap-2">
             <span className="text-2xl font-bold text-white">{kpis.leadingRating}</span>
             <span className="text-sm text-[#9A9AA2]">({kpis.leadingRatingPct}% de los títulos)</span>
